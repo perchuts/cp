@@ -21,23 +21,31 @@ template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ?
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
 
 void solve(){
- 	int n; cin >> n;
-	string s; cin >> s;
-	int c = 0, adj = 0;
-	for (int i = 0; i < n; ++i) {
-		c += (s[i] == '1');
-		if (i != n-1 && s[i] == s[i+1] && s[i] == '1') adj = 1;
+	int n, m; cin >> n >> m;
+	vector adj(n, vector(n, 0ll));
+	for (int i = 0; i < m; ++i) {
+		int u, v; cin >> u >> v;
+		--u, --v;
+		adj[u][v]++;
 	}
-	if (c&1) cout << -1 << endl;
-	else if (c == 2 && adj == 1) {
-		if (s == "110" or s == "011") cout << -1 << endl;
-		else if (s == "0110") cout << 3 << endl;
-		else cout << 2 << endl;
+	vector dp(n, vector(1<<n, 0ll));
+	dp[0][1] = 1;
+	vector<int> bits(n);	
+	for (int i = 2; i < (1 << n); ++i) {
+		int q = 0;
+		for (int j = 0; j < n; ++j) if ((i>>j)&1) bits[q++] = j;
+		for (int j = 0; j < q; ++j) {
+			for (int k = j+1; k < q; ++k) {
+				dp[bits[k]][i] = (dp[bits[k]][i] + adj[bits[j]][bits[k]] * dp[bits[j]][i-(1<<bits[k])]) % mod;
+				dp[bits[j]][i] = (dp[bits[j]][i] + adj[bits[k]][bits[j]] * dp[bits[k]][i-(1<<bits[j])]) % mod;
+			}
+		}
+		
 	}
-	else cout << c/2 << endl;
+	cout << dp[n-1][(1<<n)-1] << endl;
 }
 
 int32_t main(){_
-  int t = 1; cin >> t;
+  int t = 1; //cin >> t;
   while(t--) solve();
 }

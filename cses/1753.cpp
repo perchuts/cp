@@ -21,23 +21,27 @@ template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ?
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
 
 void solve(){
- 	int n; cin >> n;
-	string s; cin >> s;
-	int c = 0, adj = 0;
-	for (int i = 0; i < n; ++i) {
-		c += (s[i] == '1');
-		if (i != n-1 && s[i] == s[i+1] && s[i] == '1') adj = 1;
-	}
-	if (c&1) cout << -1 << endl;
-	else if (c == 2 && adj == 1) {
-		if (s == "110" or s == "011") cout << -1 << endl;
-		else if (s == "0110") cout << 3 << endl;
-		else cout << 2 << endl;
-	}
-	else cout << c/2 << endl;
+	string s, t; cin >> s >> t;
+	int n = sz(s), m = sz(t);
+	string S = t + "#" + s;
+	auto kmp = [] (string s) {
+		int n = sz(s);
+		vector<int> pi(n);
+		for (int i = 1; i < n; ++i) {
+			int j = pi[i-1];
+			while (j and s[j] != s[i]) j = pi[j-1];
+			if (s[i] == s[j]) ++j;
+			pi[i] = j;
+		}
+		return pi;
+	};
+	auto pi = kmp(S);
+	int ans = 0;
+	for (int i = m+1; i <= n+m; ++i) ans += (pi[i] == m);
+	cout << ans << endl;
 }
 
 int32_t main(){_
-  int t = 1; cin >> t;
+  int t = 1; //cin >> t;
   while(t--) solve();
 }

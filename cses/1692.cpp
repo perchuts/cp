@@ -20,24 +20,31 @@ const int maxn = 3e5+100;
 template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ? (x=y,1):0; }
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
 
+vector<int> de_brujin(int n, int k, int lim) {
+	vector<int> l = {0}, ret; // l eh lyndon word
+	while (true) {
+		if (l.size() == 0) {
+			l.push_back(0);
+		}
+		if (n % l.size() == 0) for (int i : l) {
+			ret.push_back(i);
+			if (ret.size() == n+lim-1) return ret;
+		}
+		int p = l.size();
+		while (l.size() < n) l.push_back(l[l.size()%p]);
+		while (l.size() and l.back() == k-1) l.pop_back();
+		if (l.size()) l.back()++;
+	}
+	return ret;
+}
 void solve(){
  	int n; cin >> n;
-	string s; cin >> s;
-	int c = 0, adj = 0;
-	for (int i = 0; i < n; ++i) {
-		c += (s[i] == '1');
-		if (i != n-1 && s[i] == s[i+1] && s[i] == '1') adj = 1;
-	}
-	if (c&1) cout << -1 << endl;
-	else if (c == 2 && adj == 1) {
-		if (s == "110" or s == "011") cout << -1 << endl;
-		else if (s == "0110") cout << 3 << endl;
-		else cout << 2 << endl;
-	}
-	else cout << c/2 << endl;
+	auto ans = de_brujin(n, 2, (1<<n));
+	for (auto x : ans) cout << x;
+	cout << endl;
 }
 
 int32_t main(){_
-  int t = 1; cin >> t;
+  int t = 1; //cin >> t;
   while(t--) solve();
 }

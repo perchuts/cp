@@ -21,23 +21,30 @@ template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ?
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
 
 void solve(){
- 	int n; cin >> n;
-	string s; cin >> s;
-	int c = 0, adj = 0;
-	for (int i = 0; i < n; ++i) {
-		c += (s[i] == '1');
-		if (i != n-1 && s[i] == s[i+1] && s[i] == '1') adj = 1;
+ 	int n, m; cin >> n >> m;
+	vector<int> p(n), lvl(n);
+	for (int i = 0; i < n; ++i) p[i] = i, lvl[i] = 1;
+	auto findp = [&] (auto&& self, int u) -> int {
+		return p[u] = (p[u] == u ? u : self(self, p[u]));
+	};
+	int comps = n, mx = 1;
+	auto merge = [&] (int u, int v) {
+		u = findp(findp, u), v = findp(findp, v);
+		if (u == v) return;
+		if (lvl[u] < lvl[v]) swap(u, v);
+		lvl[u] += lvl[v], p[v] = u;
+		ckmax(mx, lvl[u]), --comps;
+	};
+	for (int i = 0; i < m; ++i) {
+		int u, v; cin >> u >> v;
+		--u, --v;
+		merge(u, v);
+		cout << comps << ' ' << mx << endl;
+
 	}
-	if (c&1) cout << -1 << endl;
-	else if (c == 2 && adj == 1) {
-		if (s == "110" or s == "011") cout << -1 << endl;
-		else if (s == "0110") cout << 3 << endl;
-		else cout << 2 << endl;
-	}
-	else cout << c/2 << endl;
 }
 
 int32_t main(){_
-  int t = 1; cin >> t;
+  int t = 1; //cin >> t;
   while(t--) solve();
 }

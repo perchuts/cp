@@ -21,23 +21,39 @@ template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ?
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
 
 void solve(){
- 	int n; cin >> n;
-	string s; cin >> s;
-	int c = 0, adj = 0;
-	for (int i = 0; i < n; ++i) {
-		c += (s[i] == '1');
-		if (i != n-1 && s[i] == s[i+1] && s[i] == '1') adj = 1;
+ 	int n, m; cin >> n >> m;
+	vector<vector<int>> g(n), gr(n);
+	for (int i = 0; i < m; ++i) {
+		int u, v; cin >> u >> v;
+		--u, --v;
+		g[u].pb(v);
+		gr[v].pb(u);
 	}
-	if (c&1) cout << -1 << endl;
-	else if (c == 2 && adj == 1) {
-		if (s == "110" or s == "011") cout << -1 << endl;
-		else if (s == "0110") cout << 3 << endl;
-		else cout << 2 << endl;
+	vector<int> vis(n);
+	for (int i = 0; i < 2; ++i) {
+		queue<int> q;
+		q.push(0), vis[0] = 1;
+		while (!q.empty()) {
+			int u = q.front(); q.pop();
+			for (auto v : g[u]) {
+				if (!vis[v]) vis[v] = 1, q.push(v);
+			}
+		}
+		for (int j = 0; j < n; ++j) {
+			if (!vis[j]) {
+				cout << "NO" << endl;
+				if (!i) cout << 1 << ' ' << j+1 << endl;
+				else cout << j+1 << ' ' << 1 << endl;
+				exit(0);
+			}
+		}
+		swap(g, gr);
+		vis = vector<int>(n, 0);
 	}
-	else cout << c/2 << endl;
+	cout << "YES" << endl;
 }
 
 int32_t main(){_
-  int t = 1; cin >> t;
+  int t = 1; //cin >> t;
   while(t--) solve();
 }
