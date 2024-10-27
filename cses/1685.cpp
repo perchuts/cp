@@ -5,58 +5,58 @@
 #define endl '\n'
 #define _ ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
 #pragma GCC optimize("Ofast")
-
+ 
 using namespace std;
-
+ 
 using ll = long long;
 using ull = unsigned long long;
 using ii = pair<int,int>;
 using iii = tuple<int,int,int>;
-
+ 
 const int inf = 2e9+1;
 const int mod = 1e9+7;
 const int MAX = 3e5+100;
-
+ 
 template<typename X, typename Y> bool ckmin(X& x, const Y& y) { return (y < x) ? (x=y,1):0; }
 template<typename X, typename Y> bool ckmax(X& x, const Y& y) { return (x < y) ? (x=y,1):0; }
-
+ 
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-
+ 
 int rnd(int l, int r) {
 	uniform_int_distribution<int> uid(l, r);
 	return uid(rng);
 }
-
+ 
 // Kosaraju
 //
 // O(n + m)
-
+ 
 int n;
 vector<int> g[MAX];
 vector<int> gi[MAX]; // grafo invertido
 int vis[MAX];
 stack<int> S;
 int comp[MAX]; // componente conexo de cada vertice
-
+ 
 void dfs(int k) {
 	vis[k] = 1;
 	for (int i = 0; i < (int) g[k].size(); i++)
 		if (!vis[g[k][i]]) dfs(g[k][i]);
-
+ 
 	S.push(k);
 }
-
+ 
 void scc(int k, int c) {
 	vis[k] = 1;
 	comp[k] = c;
 	for (int i = 0; i < (int) gi[k].size(); i++)
 		if (!vis[gi[k][i]]) scc(gi[k][i], c);
 }
-
+ 
 void kosaraju() {
 	for (int i = 0; i < n; i++) vis[i] = 0;
 	for (int i = 0; i < n; i++) if (!vis[i]) dfs(i);
-
+ 
 	for (int i = 0; i < n; i++) vis[i] = 0;
 	while (S.size()) {
 		int u = S.top();
@@ -176,7 +176,7 @@ void solve(){
 		for (int i = 0; i < k; ++i) edg.pop_back();
 	}
 }
-
+ 
 int32_t main(){_
   int t = 1; //cin >> t;
   while(t--) solve();
